@@ -32,7 +32,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPost("upload")]
-        [Authorize(Roles = Role.Receptionist)]
+        [Authorize(Roles = Role.All)]
         public async Task<ActionResult<PhotoResponse>> UploadPhoto(
             [FromForm] UploadPhotoRequest request, CancellationToken token)
         {
@@ -43,7 +43,7 @@ namespace Presentation.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = Role.Receptionist)]
+        [Authorize(Roles = Role.All)]
         public async Task<ActionResult> DeletePhoto(string id,CancellationToken token)
         {
             var coordinator = new DeletePhotoCoordinatorCommand(id);

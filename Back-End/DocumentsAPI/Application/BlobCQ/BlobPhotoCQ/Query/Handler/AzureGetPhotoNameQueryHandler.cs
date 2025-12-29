@@ -8,7 +8,7 @@ namespace Application.BlobCQ.BlobPhotoCQ.Query.Handler
     {
         public Task<string> Handle(AzureGetPhotoNameQuery request, CancellationToken token)
         {
-            var blobClient = _repository.AddPhotoBlobClient(request.fileId);
+            var blobClient = _repository.AddPhotoBlobClient(request.FileId);
 
             return Task.FromResult(blobClient.Uri.ToString());
         }
