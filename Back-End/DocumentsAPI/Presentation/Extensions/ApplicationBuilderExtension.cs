@@ -22,7 +22,6 @@
 
         private static IApplicationBuilder UseRoutingSettings(this IApplicationBuilder app)
         {
-            app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
 
