@@ -65,8 +65,8 @@ namespace Application.Service.Implementation
         {
             var appointment = await _repository.GetByIdAsync(id, token);
             if (appointment is null) return Result<ReadAppointmentDTO>.NotFoundResult("Appointment is not found");
-
-            _mapper.Map(dto,appointment);
+            
+            _mapper.Map(dto, appointment);
             await _repository.SaveChangesAsync(token);
 
             var resultDTO = _mapper.Map<ReadAppointmentDTO>(appointment);

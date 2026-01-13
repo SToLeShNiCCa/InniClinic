@@ -50,7 +50,7 @@ namespace Presentation.Controllers
         [Authorize(Roles = Role.Stuff)]
         public async Task<ActionResult> UpdateAsync(int id, UpdateAppointmentDTO dto,  CancellationToken token)
         {
-            var result = await _appointmentService.UpdateAsync(id, dto,  token);
+            var result = await _appointmentService.UpdateAsync(id, dto, token);
 
             return result.ToActionResult();
         }
