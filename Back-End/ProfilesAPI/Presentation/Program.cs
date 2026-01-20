@@ -30,9 +30,9 @@ builder.Services.AddApplicationLayer();
 
 var app = builder.Build();
 
-app.AddApplicationSettings(builder.Environment);
-
 app.UseCors("AllowAngularApp");
+
+app.AddApplicationSettings(builder.Environment);
 
 app.MapControllers();
 
