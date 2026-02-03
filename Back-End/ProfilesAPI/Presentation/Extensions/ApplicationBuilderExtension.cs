@@ -8,6 +8,7 @@ namespace Presentation.Extensions
         public static IApplicationBuilder AddApplicationSettings(this IApplicationBuilder app, IWebHostEnvironment environment)
         {
             return app
+                .AddCorsPolitics()
                 .AddSwagger(environment)
                 .AddAutoMigrations()
                 .AddAuth();
@@ -37,6 +38,13 @@ namespace Presentation.Extensions
 
             var dbContext = serviceScope.ServiceProvider.GetRequiredService<ProfilesContext>();
             dbContext.Database.Migrate();
+
+            return app;
+        }
+
+        private static IApplicationBuilder AddCorsPolitics(this IApplicationBuilder app)
+        {
+            app.UseCors("AllowAngularApp");
 
             return app;
         }
