@@ -10,6 +10,7 @@ namespace Presentation.Extension
         public static IServiceCollection AddProgramServices(this IServiceCollection service, IConfiguration configuration)
         {
             return service
+                .AddCorsPolitics()
                 .ProgramServices()
                 .JwtHandler(configuration)
                 .AddSwaggerGenWithAuth(configuration);
@@ -83,6 +84,22 @@ namespace Presentation.Extension
             }
         };
                 o.AddSecurityRequirement(securityRequirement);
+            });
+
+            return services;
+        }
+
+        private static IServiceCollection AddCorsPolitics(this IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngularApp", policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials();
+                });
             });
 
             return services;

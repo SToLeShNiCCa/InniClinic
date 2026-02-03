@@ -10,9 +10,17 @@ namespace Presentation.Extension
             this IApplicationBuilder app, IWebHostEnvironment environment)
         {
             return app
+                .AddCorsPolitics()
                 .SwaggerExtension(environment)
                 .ProgramConfiguration()
                 .UseDatabaseMigrations();
+        }
+
+        private static IApplicationBuilder AddCorsPolitics(this IApplicationBuilder app)
+        {
+            app.UseCors("AllowAngularApp");
+
+            return app;
         }
 
         private static IApplicationBuilder SwaggerExtension(this IApplicationBuilder app, IWebHostEnvironment environment)
