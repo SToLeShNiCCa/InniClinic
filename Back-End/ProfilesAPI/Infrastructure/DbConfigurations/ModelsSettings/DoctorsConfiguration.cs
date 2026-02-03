@@ -6,7 +6,7 @@ namespace Infrastructure.DbConfigurations.ModelsSettings
     /// <summary>
     /// Doctors table configuration class.
     /// </summary>
-    public class DoctorsConfiguration : EntityConfuguration<Doctor>
+    public class DoctorsConfiguration : EntityConfiguration<Doctor>
     {
         /// <summary>
         /// Doctor's table configuration method.

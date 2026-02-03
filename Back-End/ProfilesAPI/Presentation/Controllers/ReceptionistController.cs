@@ -1,9 +1,10 @@
-﻿using Application.DTO;
-using AutoMapper;
-using Domain.DBServices.Models;
-using Infrastructure.DbConfigurations.Contexts;
+﻿using Application.DTO.Receptionist;
+using Application.Services.Interfaces;
+using Domain.DBServices.Models.PaginationModel;
+using Domain.Roles;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Presentation.Extensions;
 
 namespace Presentation.Controllers
 {
@@ -14,15 +15,11 @@ namespace Presentation.Controllers
     [Route("api/[controller]")]
     public class ReceptionistController : ControllerBase
     {
-        /// <summary>
-        /// Controller's dependencies.
-        /// </summary>
-        private readonly ProfilesContext _dbContext;
-        private readonly IMapper _mapper;
-        public ReceptionistController(ProfilesContext context, IMapper mapper)
+        private readonly IReceptionistService _service;
+
+        public ReceptionistController(IReceptionistService service)
         {
-            _mapper = mapper;
-            _dbContext = context;
+            _service = service;
         }
 
         /// <summary>
@@ -30,9 +27,12 @@ namespace Presentation.Controllers
         /// </summary>
         /// <returns>receptionist's list.</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Receptionist>>> GetAll()
+        [Authorize(Roles = Role.All)]
+        public async Task<ActionResult> GetAll([FromQuery] PageInfo pageInfo, CancellationToken token)
         {
-            return await _dbContext.Receptionists.ToListAsync();
+            var result = await _service.GetAllAsync(pageInfo, token);
+
+            return result.ToActionResult();
         }
 
         /// <summary>
@@ -41,13 +41,12 @@ namespace Presentation.Controllers
         /// <param name="id">Unique identifier.</param>
         /// <returns>Receptionist object.</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<Receptionist>> GetById(int id)
+        [Authorize(Roles = Role.All)]
+        public async Task<ActionResult> GetByIdAsync(int id, CancellationToken token)
         {
-            var receptionist = await _dbContext.Receptionists.FindAsync(id);
+            var result = await _service.GetByIdAsync(id, token);
 
-            if (receptionist == null) return NotFound();
-
-            return receptionist;
+            return result.ToActionResult();
         }
 
         /// <summary>
@@ -56,32 +55,26 @@ namespace Presentation.Controllers
         /// <param name="dto">Receptionist's DTO.</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<Receptionist>> Create(DTOReceptionist dto)
+        [Authorize(Roles = Role.Receptionist)]
+        public async Task<ActionResult> CreateAsync(CreateReceptionistDTO dto, CancellationToken token)
         {
-            var receptionist = _mapper.Map<Receptionist>(dto);
+            var result = await _service.CreateAsync(dto, token); // TODO
 
-            _dbContext.Receptionists.Add(receptionist);
-            await _dbContext.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetById), new { id = receptionist.Id }, receptionist);
+            return result.ToActionResult();
         }
 
         /// <summary>
         /// Updates an existing receptionist in the database.
         /// </summary>
         /// <param name="dto">Receptionist's DTO.</param>
-        /// <param name="id">Unique identifier.</param>
         /// <returns></returns>
-        [HttpPut("{id}")]
-        public async Task<ActionResult> Update(DTOReceptionist dto, int id)
+        [HttpPut("{id:int}")]
+        [Authorize(Roles = Role.Receptionist)]
+        public async Task<ActionResult> Update(int id, UpdateReceptionistDTO dto, CancellationToken token)
         {
-            var receptionist = await _dbContext.Receptionists.FindAsync(id);
-            if (receptionist == null) return NotFound();
+            var result = await _service.UpdateAsync(id, dto, token);
 
-            _mapper.Map(dto, receptionist);
-            await _dbContext.SaveChangesAsync();
-
-            return Ok(_mapper.Map<DTOReceptionist>(receptionist));
+            return result.ToActionResult();
         }
 
         /// <summary>
@@ -89,16 +82,13 @@ namespace Presentation.Controllers
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns></returns>
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        [HttpDelete("{id:int}")]
+        [Authorize(Roles = Role.Receptionist)]
+        public async Task<ActionResult> Delete(int id,CancellationToken token)
         {
-            var receptionist = await _dbContext.Receptionists.FindAsync(id);
-            if (receptionist == null) return NotFound();
+            var result = await _service.DeleteAsync(id, token);
 
-            _dbContext.Receptionists.Remove(receptionist);
-            await _dbContext.SaveChangesAsync();
-
-            return NoContent();
+            return result.ToActionResult();
         }
     }
 }

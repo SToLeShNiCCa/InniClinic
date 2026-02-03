@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.DBServices.Models.PaginationModel
+﻿namespace Domain.DBServices.Models.PaginationModel
 {
     public class PaginatedResult<T>
     {
@@ -12,9 +6,9 @@ namespace Domain.DBServices.Models.PaginationModel
         public int PageSize { get; set; }
         public int TotalPages { get; set; }
         public int TotalRecords { get; set; }
-        public IEnumerable<T> Data { get; set; }
+        public IReadOnlyCollection<T> Data { get; set; }
 
-        public PaginatedResult(IEnumerable<T> data, int pageNumber, int pageSize, int totalRecords)
+        public PaginatedResult(IReadOnlyCollection<T> data, int pageNumber, int pageSize, int totalRecords)
         {
             Data = data;
             PageNumber = pageNumber;

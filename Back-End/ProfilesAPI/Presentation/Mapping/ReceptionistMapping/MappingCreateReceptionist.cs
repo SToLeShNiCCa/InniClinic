@@ -1,4 +1,4 @@
-﻿using Application.DTO;
+﻿using Application.DTO.Receptionist;
 using AutoMapper;
 using Domain.DBServices.Models;
 
@@ -12,9 +12,9 @@ namespace Presentation.Mapping.ReceptionistMapping
         public MappingCreateReceptionist()
         {
             // Mapping configuration between Receptionists and DTOReceptionist
-            CreateMap<DTOReceptionist, Receptionist>();
+            CreateMap<CreateReceptionistDTO, Receptionist>();
             // Reverse mapping
-            CreateMap<Receptionist, DTOReceptionist>();
+            CreateMap<Receptionist, CreateReceptionistDTO>();
         }
     }
 }

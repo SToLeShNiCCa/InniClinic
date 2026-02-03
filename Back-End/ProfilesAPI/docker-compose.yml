@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  ProfilesSqlServer:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: ProfilesSqlServer
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=YourStrong!Passw0rd
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - KeyCloakNetwork
+    restart: unless-stopped
+
+  presentation:
+    image: ${DOCKER_REGISTRY-}presentation
+    build:
+      context: .
+      dockerfile: Presentation/Dockerfile
+    container_name: profiles-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - DatabaseSettings__ConnectionString=Server=ProfilesSqlServer;Database=ProfilesAPI;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;
+    ports:
+      - "5236:80"
+    depends_on:
+      - ProfilesSqlServer
+    networks:
+      - KeyCloakNetwork
+    restart: unless-stopped
+
+volumes:
+  sqlserver_data:
+
+networks:
+  KeyCloakNetwork:
+    external: true
+  

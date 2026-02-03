@@ -21,7 +21,7 @@
         public string LastName { get; set; }
 
         /// <summary>
-        /// General field for all entites - Middle Name.
+        /// General field for all entites - Middle Name. // TODO
         /// </summary>
         public string MiddleName { get; set; }
 

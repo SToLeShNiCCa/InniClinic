@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.DTO
+﻿namespace Application.DTO.Receptionist
 {
-    /// <summary>
-    /// Data Transfer Object (DTO) for Receptionist entity.
-    /// </summary>
-    public class DTOReceptionist
+    public class ReadReceptionistDTO
     {
+        public int Id { get; set; }
+
         /// <summary>
         /// Receptionist's first name.
         /// </summary>
@@ -30,10 +23,5 @@ namespace Application.DTO
         /// Office identifier associated with the receptionist(foreign key).
         /// </summary>
         public int OfficeId { get; set; }
-
-        /// <summary>
-        /// Account identifier associated with the receptionist(foreign key).
-        /// </summary>
-        public int AccountId { get; set; }
     }
 }

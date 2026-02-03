@@ -1,7 +1,7 @@
 ﻿using Domain.DBServices.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Metadata.Builders; // Add this using directive
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.DbConfigurations.ModelsSettings
 {
@@ -9,7 +9,7 @@ namespace Infrastructure.DbConfigurations.ModelsSettings
     /// Base entity configuration class.
     /// </summary>
     /// <typeparam name="T">Template which contain model's class</typeparam>
-    public abstract class EntityConfuguration<T> : IEntityTypeConfiguration<T>
+    public abstract class EntityConfiguration<T> : IEntityTypeConfiguration<T>
         where T : Entity
     {
         /// <summary>

@@ -1,46 +1,28 @@
-using Infrastructure.DbConfigurations.Contexts;
-using Microsoft.EntityFrameworkCore;
-using Migrations.MSSQL;
-using System.Reflection;
+using Application;
+using Infrastructure;
+using Presentation.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-/*builder.AddServiceDefaults();*/
+builder.Configuration
+    .AddJsonFile("appsettings.json")
+    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true);
 
-builder.Services.AddAutoMapper(cfg => { }, Assembly.GetExecutingAssembly());
+builder.Services.AddLocalization(options =>
+{
+    options.ResourcesPath = "Resources";
+});
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
-string connection = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new Exception("Connection string not found");
-
-builder.Services.AddDbContext<ProfilesContext>(builder => builder
-.UseSqlServer(connection, op => op.MigrationsAssembly(typeof(ProfilesContextFactory).Assembly)));
+builder.Services.AddPresentation(builder.Configuration);
+builder.Services.AddInfrastructureLayer(builder.Configuration);
+builder.Services.AddApplicationLayer();
 
 var app = builder.Build();
 
-/*app.MapDefaultEndpoints();*/
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ProfilesContext>();
-    db.Database.Migrate();
-}
-
-    //app.UseHttpsRedirection();
-
-app.UseAuthorization();
+app.AddApplicationSettings(builder.Environment);
 
 app.MapControllers();
+
+app.MapOpenApi();
 
 app.Run();
