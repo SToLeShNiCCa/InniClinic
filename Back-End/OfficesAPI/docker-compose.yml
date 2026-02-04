@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  OfficesMongoDb:
+    image: mongo:7.0
+    container_name: OfficesMongoDb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - KeyCloakNetwork
+    restart: unless-stopped
+    command: mongod --bind_ip_all
+
+  presentation:
+    image: ${DOCKER_REGISTRY-}presentation
+    build:
+      context: .
+      dockerfile: Presentation/Dockerfile
+    container_name: offices-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - DatabaseSettings__ConnectionString=mongodb://OfficesMongoDb:27017
+      - DatabaseSettings__DatabaseName=OfficesAPI
+      - DatabaseSettings__OfficesCollectionName=Offices
+    ports:
+      - "5235:80"
+    depends_on:
+      - OfficesMongoDb
+    networks:
+      - KeyCloakNetwork
+    restart: unless-stopped
+
+networks:
+  KeyCloakNetwork:
+    external: true
+
+volumes:
+  mongodb_data:
+  
