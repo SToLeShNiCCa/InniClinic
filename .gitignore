@@ -361,3 +361,14 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# appsettings.json files that may contain sensitive data
+.vs/appsettings*.json
+.vs/appsettings*.Development.json
+/Back-End/ServicesAPI/Presentation/appsettings.json
+/Back-End/ServicesAPI/Presentation/appsettings.Development.json
+/Back-End/AppointmentAPI/Presentation/appsettings.json
+/Back-End/AppointmentAPI/Presentation/appsettings.Development.json
+/Back-End/AppointmentAPI
+/Back-End/ProfilesAPI
+/Front-End/InnoClinic

@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  ServicesSqlServer:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: ServicesSqlServer
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Strong!Passw0rd
+      - MSSQL_PID=Express
+    ports:
+      - "1434:1434"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - KeyCloakNetwork
+    restart: unless-stopped
+
+  presentation:
+    image: ${DOCKER_REGISTRY-}presentation
+    build:
+      context: .
+      dockerfile: Presentation/Dockerfile
+    container_name: services-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - DatabaseSettings__ConnectionString=Server=ServicesSqlServer;Database=ServicesAPI;User Id=sa;Password=Strong!Passw0rd;TrustServerCertificate=True;
+    ports:
+      - "5071:80"
+    networks:
+      - KeyCloakNetwork
+    depends_on:
+      - ServicesSqlServer
+    restart: unless-stopped
+
+volumes:
+  sqlserver_data:
+  
+networks:
+    KeyCloakNetwork:
+        external: true    
