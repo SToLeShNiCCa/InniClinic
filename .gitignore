@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Back-End/AppointmentAPI/.env
+/Front-End/InnoClinic
+/Front-End/package-lock.json

@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  AppointmentDb:
+    image: postgres:15-alpine
+    container_name: AppointmentDb
+    environment:
+      POSTGRES_DB: AppointmentDB
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - KeyCloakNetwork
+
+  appointment-api:
+    build:
+      context: .
+      dockerfile: Presentation/Dockerfile
+    image: appointment-api:latest
+    container_name: AppointmentAPI
+    depends_on:
+      - AppointmentDb
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=AppointmentDb;Port=5432;Database=AppointmentDB;Username=admin;Password=password"
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "http://+:80"
+    ports:
+      - "5018:80"
+    volumes:
+      - ./logs:/app/logs
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    restart: unless-stopped
+    networks:
+      - KeyCloakNetwork
+
+networks:
+  KeyCloakNetwork:
+    external: true
+
+volumes:
+  postgres_data:
