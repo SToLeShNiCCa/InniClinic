@@ -2,9 +2,9 @@
 {
     public class UpdateOfficeDTO
     {
-        public string Address { get; set; }
-        public int PhotoID { get; set; }
-        public string RegistryPhoneNumber { get; set; }
+        public string Address { get; set; } = default!;
+        public string PhotoID { get; set; } = default!;
+        public string RegistryPhoneNumber { get; set; } = default!;
         public bool IsActive { get; set; }
     }
 }

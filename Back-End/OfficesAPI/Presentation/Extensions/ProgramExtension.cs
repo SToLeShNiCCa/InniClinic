@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Runtime.CompilerServices;
 
 namespace Presentation.Extensions
 {
@@ -10,6 +11,7 @@ namespace Presentation.Extensions
             IConfiguration configuration)
         {
             return services
+                .AddCorsPolitics()
                 .UseProgramSettings()
                 .AddAuth(configuration)
                 .AddSwaggerGenWithAuth(configuration);
@@ -82,6 +84,22 @@ namespace Presentation.Extensions
             }
         };
                 o.AddSecurityRequirement(securityRequirement);
+            });
+
+            return services;
+        }
+
+        private static IServiceCollection AddCorsPolitics(this IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngularApp", policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials();
+                });
             });
 
             return services;

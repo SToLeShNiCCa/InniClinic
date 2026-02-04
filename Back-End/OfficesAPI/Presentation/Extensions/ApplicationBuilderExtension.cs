@@ -8,6 +8,7 @@ namespace Presentation.Extensions
             this IApplicationBuilder app, IWebHostEnvironment environment)
         {
             return app
+                .AddCorsPolitics()
                 .AddSwagger(environment)
                 .AddApplicationConfigurations();
         }
@@ -28,6 +29,13 @@ namespace Presentation.Extensions
             app.UseHttpsRedirection();
             app.UseMiddleware<ExceptionHandlerMiddleware>();
             app.UseAuthorization();
+
+            return app;
+        }
+
+        private static IApplicationBuilder AddCorsPolitics(this IApplicationBuilder app)
+        {
+            app.UseCors("AllowAngularApp");
 
             return app;
         }
