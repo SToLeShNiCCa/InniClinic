@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace Application.DTO.Validator.ServiceValidator;
 
-public class CreateServiceDTOValidator : AbstractValidator<CreateServiceDTO>
+public class UpdateServiceDTOValidator : AbstractValidator<UpdateServiceDTO>
 {
-    public CreateServiceDTOValidator()
+    public UpdateServiceDTOValidator()
     {
         RuleFor(x => x.ServiceCategoryId)
             .NotNull()
