@@ -5,6 +5,7 @@
         public static IApplicationBuilder UseApplicationSettings(this IApplicationBuilder app, IHostEnvironment environment)
         {
             return app
+                .AddCorsPolitics()
                 .AddSwaggerUI(environment)
                 .UseRoutingSettings();
         }
@@ -24,6 +25,13 @@
         {
             app.UseAuthentication();
             app.UseAuthorization();
+
+            return app;
+        }
+
+        private static IApplicationBuilder AddCorsPolitics(this IApplicationBuilder app)
+        {
+            app.UseCors("AllowFrontend");
 
             return app;
         }

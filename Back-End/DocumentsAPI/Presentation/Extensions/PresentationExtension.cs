@@ -1,4 +1,6 @@
 ﻿using Infrastructure.DbSettings;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Runtime.CompilerServices;
 
@@ -10,11 +12,13 @@ namespace Presentation.Extensions
             this IServiceCollection services, IConfigurationBuilder configurationBuilder, IConfiguration configuration)
         {
             return services
-                .UseControllers()
+                .AddJsonConf(configurationBuilder)
+                .AddCorsPolitics()
+                .AddDbSettings(configuration)
                 .AddSwagger()
                 .AddSwaggerGenWithAuth(configuration)
-                .AddJsonConf(configurationBuilder)
-                .AddDbSettings(configuration);
+                .JwtHandler(configuration)
+                .UseControllers();
         }
 
         private static IServiceCollection UseControllers(this IServiceCollection services)
@@ -94,6 +98,40 @@ namespace Presentation.Extensions
                 };
                 o.AddSecurityRequirement(securityRequirement);
             });
+
+            return services;
+        }
+
+        private static IServiceCollection AddCorsPolitics(this IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend", policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200", "http://localhost:5012")
+                          .AllowAnyMethod()
+                          .AllowAnyHeader()
+                          .AllowCredentials();
+                });
+            });
+
+            return services;
+        }
+
+        private static IServiceCollection JwtHandler(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddAuthorization();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(o =>
+                {
+                    o.RequireHttpsMetadata = false;
+                    o.Audience = configuration["Authentication:Audience"];
+                    o.MetadataAddress = configuration["Authentication:MetadataAddress"]!;
+                    o.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = configuration["Authentication:ValidIssuer"]
+                    };
+                });
 
             return services;
         }
