@@ -1,4 +1,8 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Application.Validator;
+using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Reflection;
 
 namespace Presentation.Extensions
@@ -8,7 +12,10 @@ namespace Presentation.Extensions
         public static IServiceCollection AddProgramServices(this IServiceCollection services, IConfiguration configuration)
         {
             return services
+                .AddCorsPolitics()
+                .AddValidator()
                 .ProgramServices()
+                .JwtHandler(configuration)
                 .AddSwaggerGenWithAuth(configuration);
         }
 
@@ -63,6 +70,47 @@ namespace Presentation.Extensions
         };
                 o.AddSecurityRequirement(securityRequirement);
             });
+
+            return services;
+        }
+
+        private static IServiceCollection AddCorsPolitics(this IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngularApp", policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials();
+                });
+            });
+
+            return services;
+        }
+
+        private static IServiceCollection JwtHandler(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddAuthorization();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(o =>
+                {
+                    o.RequireHttpsMetadata = false;
+                    o.Audience = configuration["Authentication:Audience"];
+                    o.MetadataAddress = configuration["Authentication:MetadataAddress"]!;
+                    o.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = configuration["Authentication:ValidIssuer"]
+                    };
+                });
+
+            return services;
+        }
+
+        private static IServiceCollection AddValidator(this IServiceCollection services)
+        {
+            services.AddValidatorsFromAssemblyContaining<CreateAppointmentDTOValidator>();
 
             return services;
         }

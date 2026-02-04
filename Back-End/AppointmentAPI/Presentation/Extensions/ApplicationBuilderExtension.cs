@@ -10,6 +10,7 @@ namespace Presentation.Extensions
             this IApplicationBuilder app, IWebHostEnvironment environment)
         {
             return app
+                .AddCorsPolitics()
                 .UseSwagger(environment)
                 .ProgramConfigurations()
                 .UseMigrations();
@@ -39,6 +40,13 @@ namespace Presentation.Extensions
             using var scope = app.ApplicationServices.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<AppointmentDbContext>();
             db.Database.Migrate();
+
+            return app;
+        }
+
+        private static IApplicationBuilder AddCorsPolitics(this IApplicationBuilder app)
+        {
+            app.UseCors("AllowAngularApp");
 
             return app;
         }
